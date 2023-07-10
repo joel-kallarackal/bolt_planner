@@ -33,6 +33,11 @@ class Waypoint:
             west :
                 longitude
         """
+        """
+        TODO:
+            find correct latitudes and longitudes of north, south, east and west 
+            of IITM
+        """
         self.north, self.south, self.east, self.west = north, south, east, west
         self.G = ox.graph_from_bbox(north, south, east, west)
         
@@ -61,6 +66,15 @@ class Waypoint:
         return data['geometry']
     
     def publish_waypoints(self,req):
+        """
+        Args:
+            req (WaypointGenRequest): contains latitude and longitude of current location
+            and destination
+
+        Returns:
+            res (WaypointGenResponse): contains list of latitudes and longitudes of waypoints 
+            along the path
+        """
         waypoints = self.generate_waypoints(req.orig_lat,req.orig_long,req.dest_lat,req.dest_long)
         res = WaypointGenResponse()
         res.latitudes = list(waypoints.y)
