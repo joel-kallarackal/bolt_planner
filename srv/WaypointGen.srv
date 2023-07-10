@@ -1,0 +1,9 @@
+float64 orig_lat
+float64 orig_long
+float64 dest_lat
+float64 dest_long
+
+---
+
+float64[] latitudes
+float64[] longitudes
