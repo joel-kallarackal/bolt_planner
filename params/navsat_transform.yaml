@@ -1,35 +1,12 @@
-frequency: 4
-
-# delay:
-
-# Location Dependent
-# https://www.ngdc.noaa.gov/geomag/calculators/magcalc.shtml#declination
-# NAC: 12.992396N 80.230157E
-# Model Used:	WMM-2020	Help
-# Latitude:	12.992396° N
-# Longitude:	80.230157° E
-# Date	Declination
-# 2022-03-09	1.25° W  ± 0.29°  changing by  0.01° E per year
-# 0.02181662 +- 0.005061455
-magnetic_declination_radians: -0.022
-
-# pi/2 IMU gives in NED, we need ENU
-yaw_offset: 1.5707963
-
-# SBG IMU GIVES IN ENU FRAME !
-# yaw_offset: 0
-
+frequency: 5
+delay: 0.1
+magnetic_declination_radians: -0.022  # For lat/long 12 80
+yaw_offset: 0  # IMU reads 0 facing the east corresponding to magnetic north
 zero_altitude: true
-
-# Note heading must be in ENU (acc to yaw_offset)
-# Uses odom instead of imu
-use_odometry_yaw: false
-
 publish_filtered_gps: true
-
-# set origin as the ~datum param (not the first pose)
-wait_for_datum: false
-datum : [-30.06020924906737,-51.173918592927656,10.123070307767174]
-
 broadcast_cartesian_transform: true
-cartesian_frame_id: "local_enu"
+use_odometry_yaw: false
+wait_for_datum: true
+broadcast_cartesian_transform_as_parent_frame: false
+transform_timeout: false
+datum: [12.9924266, 80.2300517, 0]  # NAC Bench lol

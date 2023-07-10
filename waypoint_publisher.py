@@ -71,6 +71,7 @@ class Waypoint:
             msg.latitude = latitude
             msg.longitude = longitude
             self.waypoint_pub.publish(msg)
+            rospy.sleep(1)
             
         return res
         
