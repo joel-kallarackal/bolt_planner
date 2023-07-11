@@ -9,4 +9,4 @@ use_odometry_yaw: false
 wait_for_datum: true
 broadcast_cartesian_transform_as_parent_frame: false
 transform_timeout: false
-datum: [12.9924266, 80.2300517, 0]  # NAC Bench lol
+datum: [12.990700240345722, 80.23450290705499, 9.347828478534394]  # NAC Bench lol

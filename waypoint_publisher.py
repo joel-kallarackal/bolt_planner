@@ -1,11 +1,7 @@
 #!/usr/bin/env python3
 import rospy
 from std_msgs.msg import String
-import geopandas as gpd
-import pandas as pd
 import osmnx as ox
-from shapely import wkt
-import matplotlib
 from bolt_planner.srv import WaypointGen,WaypointGenResponse
 from bolt_planner.msg import LatLongWayPoint, AlmostThere
 import queue
@@ -96,7 +92,6 @@ class Waypoint:
             msg.latitude = latlong[0]
             msg.longitude = latlong[1]
             self.waypoint_pub.publish(msg)
-            
             res.status = "Successfully published first waypoint"
         else:
             res.status = "Failed to publish first waypoint"
@@ -111,15 +106,20 @@ class Waypoint:
             msg.longitude = latlong[1]
             self.waypoint_pub.publish(msg)
             
-            
+      
             
         
 
 def main():
     waypoint_obj = Waypoint()
-    
     rospy.init_node('waypoint_generator', anonymous=True)
-    rospy.Service("generate_waypoints",WaypointGen,waypoint_obj.publish_first_waypoint)
+
+    # Service
+    # Input - latitude and longitude of start and destination
+    # Call back function is publish_first_waypoint
+    # Outputs success or failure 
+    rospy.Service("generate_waypoints",WaypointGen,waypoint_obj.publish_first_waypoint) 
+    
     rospy.spin()
                 
 if __name__ == '__main__':

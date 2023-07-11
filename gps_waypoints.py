@@ -5,6 +5,7 @@ import rospy
 import queue
 
 from sensor_msgs.msg import NavSatFix
+from std_msgs.msg import Bool
 from nav_msgs.msg import Odometry, Path
 from actionlib_msgs.msg import GoalStatusArray, GoalID
 from move_base_msgs.msg import MoveBaseActionGoal
@@ -37,7 +38,8 @@ class Transformer:
         Checks if there is any error in the move_base status. If yes, it logs the error and and changes almost_there to True.
     * run:
         Runs the node.
-
+    * get_gps_reliability:
+        Checks if the gps data is reliable and publishes True if it is
     """
     def __init__(self, odom_topic="/odom", gps_nsf_topic="/vikram_sim/gps/fix"):
         """
@@ -77,7 +79,7 @@ class Transformer:
         self.curr_pose_pub = rospy.Publisher("/curr_waypoint_pose_testing", PoseStamped, queue_size=1, latch=True)
         self.next_pose_pub = rospy.Publisher("/next_waypoint_pose_testing", PoseStamped, queue_size=1, latch=True)
         self.almost_there_pub = rospy.Publisher("/gps_waypoints/almost_there", AlmostThere, queue_size=1, latch=True)
-
+        self.gps_reliability_pub = rospy.Publisher("/gps_waypoints/reliability",Bool, queue_size=10, latch=True)
 
         # Subscribers
         self.mb_status_sub = rospy.Subscriber("/move_base/status", GoalStatusArray, self.check_status)
@@ -85,6 +87,7 @@ class Transformer:
         self.proximity_sub = rospy.Subscriber(odom_topic, Odometry, self.update_proximity)
         self.ll_sub = rospy.Subscriber("/gps_waypoints/latlong", LatLongWayPoint, self.ll_to_nav)
         self.odom_wpts_sub = rospy.Subscriber("/gps_waypoints/odom", Odometry, self.enqueue_goal)
+        self.gps_covariance_checker_sub =  rospy.Subscriber(gps_nsf_topic, NavSatFix, self.get_gps_reliability)
 
         # Services
         self.flush_queue_service = rospy.Service("/gps_waypoints/flush_queue", BoolBoolService, self.flush_queue)
@@ -134,7 +137,15 @@ class Transformer:
                 rospy.logerr("Service call failed; Unable to start the vehicle. Retrying. Cause:", e)
                 self.pause_journey(False, True)
             return False
-
+            
+    def get_gps_reliability(self,data: NavSatFix):
+        """
+            Publishes True if gps data is reliable else publishes False
+        """
+        if data.position_covariance[0]<1 and data.position_covariance[4]<1 and data.position_covariance[8]<1:
+            self.gps_reliability_pub.publish(True)
+        else:
+            self.gps_reliability_pub.publish(False)
     def set_default_nsf(self, data: NavSatFix):
 
         """

@@ -1,0 +1,12 @@
+{
+    "python.autoComplete.extraPaths": [
+        "/home/kallrax/abhiyaan_ws/bolt_ws/devel/lib/python3/dist-packages",
+        "/home/kallrax/catkin_ws/devel/lib/python3/dist-packages",
+        "/opt/ros/noetic/lib/python3/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/kallrax/abhiyaan_ws/bolt_ws/devel/lib/python3/dist-packages",
+        "/home/kallrax/catkin_ws/devel/lib/python3/dist-packages",
+        "/opt/ros/noetic/lib/python3/dist-packages"
+    ]
+}
