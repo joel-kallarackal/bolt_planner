@@ -8,7 +8,7 @@ from sensor_msgs.msg import NavSatFix
 from nav_msgs.msg import Odometry, Path
 from actionlib_msgs.msg import GoalStatusArray, GoalID
 from move_base_msgs.msg import MoveBaseActionGoal
-from bolt_planner.msg import LatLongWayPoint
+from bolt_planner.msg import LatLongWayPoint,AlmostThere
 from bolt_planner.srv import BoolBoolService
 from geometry_msgs.msg import PoseStamped
 
@@ -76,6 +76,8 @@ class Transformer:
         self.stop_mb_pub = rospy.Publisher("/move_base/cancel", GoalID, queue_size=1)
         self.curr_pose_pub = rospy.Publisher("/curr_waypoint_pose_testing", PoseStamped, queue_size=1, latch=True)
         self.next_pose_pub = rospy.Publisher("/next_waypoint_pose_testing", PoseStamped, queue_size=1, latch=True)
+        self.almost_there_pub = rospy.Publisher("/gps_waypoints/almost_there", AlmostThere, queue_size=1, latch=True)
+
 
         # Subscribers
         self.mb_status_sub = rospy.Subscriber("/move_base/status", GoalStatusArray, self.check_status)
@@ -154,6 +156,11 @@ class Transformer:
                     self.curr_goal_pos[1] - data.pose.pose.position.y) ** 2) < self.proximity_thresh:
                 # print("Almost there") # DEBUG
                 self.almost_there = True
+                self.almost_there_pub.publish(True)
+            else:
+                self.almost_there_pub.publish(False)
+                
+                
 
     def ll_to_nav(self, data: LatLongWayPoint):
 
@@ -226,6 +233,7 @@ class Transformer:
                     f"Something is wrong. Move_Base has rejected the waypoint. \
                     Moving on to the next goal. Here is the last move_base status:{latest_status}")
                 self.almost_there = True
+                
 
         # STATUS LIST:
         # PENDING = 0 The goal has yet to be processed by the action server

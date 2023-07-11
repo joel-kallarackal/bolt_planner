@@ -5,5 +5,4 @@ float64 dest_long
 
 ---
 
-float64[] latitudes
-float64[] longitudes
+string status
