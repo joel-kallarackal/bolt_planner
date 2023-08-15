@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 import rospy
 from std_msgs.msg import String
 import osmnx as ox
@@ -41,11 +42,11 @@ class Waypoint:
         self.G = ox.graph_from_bbox(north, south, east, west)
         self.waypoint_queue = queue.Queue()
         
-        # Publishers
+        #Publishers
         self.waypoint_pub = rospy.Publisher('/gps_waypoints/latlong', LatLongWayPoint, queue_size=10)
         
         #Subscribers
-        self.pub_next_waypoint = rospy.Subscriber("/gps_waypoints/almost_there/", AlmostThere, queue_size=10)
+        self.pub_next_waypoint = rospy.Subscriber("/gps_waypoints/almost_there/", AlmostThere, self.publish_waypoint)
         self.start_pub = True
            
     def generate_waypoints(self, lat_orig, long_orig, lat_des, long_des):
@@ -105,8 +106,6 @@ class Waypoint:
             msg.latitude = latlong[0]
             msg.longitude = latlong[1]
             self.waypoint_pub.publish(msg)
-            
-      
             
         
 
